@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gen-RSI &middot; Recursive Self-Improvement of Video Generators through World Proxies</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:#333;font:18px/1.6 Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;-webkit-font-smoothing:antialiased}
+svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+
+.header-wrapper{background:rgb(244,234,203) linear-gradient(-235deg,#c4edf1 55%,#b4e3ca 85%,rgb(244,234,203) 100%)}
+.header-container{max-width:2000px;margin:0 auto;padding:50px;display:flex;align-items:center;gap:40px}
+.header-content,.header-image{flex:1 1 0;min-width:0}
+.header-content{color:#176885}
+.header-content strong{color:#155b7b}
+h1{margin:0 0 .4em;color:#1e808a;font-size:54px;line-height:1.2}
+h1 i{display:block}
+h1 .h2 i{font-style:normal}
+h1 .h2{display:block;margin-top:.1em;font-size:32px;line-height:1.2}
+.tagline{font-size:19px;margin:0 0 1.2em}
+.icon-container{display:flex;flex-direction:column;gap:15px}
+.icon-item{display:flex;align-items:center;font-size:18px}
+.icon-item svg{width:30px;height:30px;margin-right:1em;color:#155b7b}
+.button-container{margin:24px 0 8px}
+.button{display:inline-flex;align-items:center;gap:8px;margin:5px 2px;padding:10px 20px;background:#FFF0CE;color:#000;border:2px solid rgba(255,193,7,.5);border-radius:20px;font-weight:bold;text-decoration:none;transition:background-color .3s,color .3s}
+.button svg{width:18px;height:18px}
+a.button[href]:hover{background:#EAB682;color:#fff}
+.button.soon{cursor:default}
+.header-image img{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 6px 24px -12px rgba(21,91,123,.5)}
+.teaser-cap{margin:12px 0 0;font-size:15px;line-height:1.5;color:#176885;text-align:center}
+.teaser-cap b{color:#155b7b}
+
+.byline{max-width:1200px;margin:0 auto 12px;padding:1.6rem 5px 1.1rem;text-align:center;border-bottom:1px solid rgba(0,0,0,.1)}
+.author{margin:0;font-size:22px;color:#000}
+.venue{margin:.2em 0 0;font:bolder 21px/1.5 Arial,sans-serif;color:#155b7b}
+
+.strip{position:relative;overflow:hidden;padding:16px 0}
+.strip::before,.strip::after{content:"";position:absolute;top:0;bottom:0;width:140px;z-index:3;pointer-events:none}
+.strip::before{left:0;background:linear-gradient(90deg,#fff 10%,rgba(255,255,255,0))}
+.strip::after{right:0;background:linear-gradient(270deg,#fff 10%,rgba(255,255,255,0))}
+.row{display:flex;gap:12px;width:max-content;will-change:transform;animation:slide 72s linear infinite}
+.row+.row{margin-top:12px;animation-duration:88s;animation-direction:reverse}
+.strip:hover .row{animation-play-state:paused}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.row figure{margin:0;position:relative;flex:0 0 auto}
+.row video{display:block;width:272px;aspect-ratio:16/9;object-fit:cover;background:#000;border-radius:8px}
+.row figcaption{position:absolute;left:8px;bottom:7px;font:12px/1.2 Arial,sans-serif;color:#eef2f5;background:rgba(6,8,10,.72);padding:3px 7px;border-radius:5px}
+@media(prefers-reduced-motion:reduce){.strip .row{animation:none}}
+
+.jump{max-width:1200px;margin:0 auto;padding:12px 24px 0}
+.icon-row{display:flex;justify-content:center;flex-wrap:wrap;padding:8px 0 16px}
+.icon-link{flex:1 1 100px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:10px;padding:10px;text-align:center;line-height:1.3;color:#1a1a1a;text-decoration:none;background:#d6eefb;border:3px solid #508af6;border-radius:10px}
+.icon-link:hover{background:#88c2fa}
+.icon-link svg{width:1.8em;height:1.8em;margin-bottom:6px;color:#2458b3}
+.click-hint{display:flex;align-items:center;justify-content:center;gap:8px;width:60%;margin:0 auto 20px;padding:10px;font-size:15px;color:#333;border:2px solid #ccc;border-radius:5px;box-shadow:0 4px 8px rgba(0,0,0,.1)}
+.click-hint strong{color:#007bff}
+.click-hint svg{width:20px;height:20px;color:#007bff}
+hr{border:none;border-bottom:1px solid rgba(0,0,0,.1);margin:40px 0 0}
+
+.sec{max-width:1200px;margin:0 auto;padding:36px 24px 12px}
+.sec h2{margin:0 0 .8em;text-align:center;font-size:36px;line-height:1.2;color:#111}
+.sec figure{margin:0;text-align:center}
+.sec figcaption{margin-top:1em;font-size:20px;color:#333}
+.sec figcaption strong{color:#111}
+.sec img{display:block;width:100%;height:auto}
+.figwrap{overflow-x:auto}
+.vrow{display:grid;grid-template-columns:110px repeat(4,minmax(0,1fr));gap:8px;align-items:center;min-width:760px;margin-bottom:8px}
+.vh{font-size:19px;line-height:1.25;color:#333}
+.vh.ours{font-weight:bold;color:#1e808a}
+.rl{padding-right:4px;font-size:14px;line-height:1.3;color:#555;text-align:right}
+.vc video,.gi video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#000;border-radius:4px}
+.vc.ours video{box-shadow:0 0 0 3px #1e808a}
+.gal{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 10px}
+.gn{margin-top:5px;font-size:14px;line-height:1.3;color:#444}
+@media(max-width:900px){
+  .header-container{flex-direction:column;padding:32px 16px}
+  h1{font-size:42px}
+  h1 .h2{font-size:26px}
+  .click-hint{width:100%}
+  .gal{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+.appendix{margin-top:48px;padding:36px 0 48px;border-top:1px solid rgba(0,0,0,.1)}
+.appendix>div{max-width:1200px;margin:0 auto;padding:0 24px}
+.appendix h3{margin:0 0 .6em;font-size:16px;font-weight:600;color:#555}
+pre.bibtex{margin:0;padding:2em;overflow-x:auto;font:15px/1.6 "Courier New",Courier,monospace;color:#222;background:#f9f9f9}
+</style>
+</head>
+<body>
+
+<div class="header-wrapper" id="top">
+  <div class="header-container">
+    <div class="header-content">
+      <h1><i>Gen-RSI:</i> <span class="h2">Recursive Self-Improvement <br><i>of Video Generators</i>through World Proxies</span></h1>
+      <p class="tagline">Physics evaluated in a <strong><em>simulator</em></strong>, corrections delivered at the student's own denoising states.</p>
+      <div class="icon-container">
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><div>A generated video becomes an executable <strong>Blender proxy</strong>.</div></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><div>The <strong>simulator</strong> repairs the proxy.</div></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><div>The render conditions a <strong>frozen teacher</strong>.</div></div>
+        <div class="icon-item"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><div>The <strong>student</strong> learns at its own denoising states.</div></div>
+      </div>
+      <div class="button-container">
+        <a class="button soon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Paper (coming soon)</a>
+        <a class="button soon"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Code (coming soon)</a>
+        <a class="button" href="#bibtex"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>BibTeX</a>
+      </div>
+    </div>
+    <figure class="header-image" style="margin:0">
+      <img src="assets/teaser.gif" alt="Gen-RSI overview: a generated video becomes an executable Blender world proxy, a checker diagnoses violations, a verified repair is rendered, and a frozen teacher supervises the student at its own denoising states.">
+      <figcaption class="teaser-cap"><b>The Gen-RSI loop.</b> A generated video becomes an executable Blender proxy, the simulator repairs it, the render conditions a frozen teacher, and the student is updated at its own denoising states.</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="byline" id="byline">
+  <p class="author">Anonymous Authors</p>
+  <p class="venue">Under review &middot; ICLR 2027</p>
+</div>
+
+<div class="strip" id="strip">
+  <div class="row" id="rowA"></div>
+  <div class="row" id="rowB"></div>
+</div>
+
+<div class="jump" id="jump">
+  <div class="icon-row">
+    <a class="icon-link" href="#method"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Method<br>Overview</a>
+    <a class="icon-link" href="#comparison"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Main Comparison<br>with Other Methods</a>
+    <a class="icon-link" href="#ablation"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Ablation Study<br>of Loop Rounds</a>
+    <a class="icon-link" href="#more"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>More<br>Results</a>
+  </div>
+  <p class="click-hint"><svg viewBox="0 0 24 24"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="M13 13l6 6"/></svg><strong>Click to jump to each section.</strong></p>
+  <hr>
+</div>
+
+<section class="sec" id="method">
+  <h2>Method Overview</h2>
+  <figure>
+    <img loading="lazy" src="assets/method.png" alt="Gen-RSI method: the accepted Blender proxy conditions a frozen VACE teacher whose target corrects the student at its own denoising states.">
+    <figcaption><strong>Figure 1:</strong> An accepted Blender proxy renders frames and masks that condition a frozen VACE teacher, and at the same fresh student states the teacher's detached target corrects only the student. At inference only text and the student remain.</figcaption>
+  </figure>
+</section>
+
+<section class="sec" id="comparison">
+  <h2>Main Comparison with Other Methods</h2>
+  <figure>
+    <div class="figwrap" id="cmp"></div>
+    <figcaption><strong>Figure 2: Qualitative comparison with other methods</strong>, one text prompt per row.</figcaption>
+  </figure>
+</section>
+
+<section class="sec" id="ablation">
+  <h2>Ablation Study of Loop Rounds</h2>
+  <figure>
+    <div class="figwrap" id="loops"></div>
+    <figcaption><strong>Figure 3: Qualitative ablation of loop rounds</strong>, the same case after 0, 1 and 2 repair rounds.</figcaption>
+  </figure>
+</section>
+
+<section class="sec" id="more">
+  <h2>More Results</h2>
+  <figure>
+    <div class="gal" id="gallery"></div>
+    <figcaption><strong>Figure 4: More results</strong> across physical phenomena.</figcaption>
+  </figure>
+</section>
+
+<div class="appendix" id="bibtex"><div>
+  <h3>BibTeX</h3>
+<pre class="bibtex">@inproceedings{genrsi2027,
+  title     = {Gen-RSI: Recursive Self-Improvement of Video Generators through World Proxies},
+  author    = {Anonymous Authors},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2027},
+  note      = {Under review}
+}</pre>
+</div></div>
+
+<script>
+const SELECTED_BASE = "assets/clips/";
+const mediaUrl = (sample, file) =>
+  SELECTED_BASE + encodeURIComponent(sample.key) + "/" + file;
+
+const CMP_ARMS = [
+  {k:"base",    n:"Wan2.1-T2V-1.3B"},
+  {k:"physvid", n:"+ PhysVid-1.7B"},
+  {k:"phyt2v",  n:"+ PhyT2V"},
+  {k:"ours",    n:"Gen-RSI (ours)"},
+];
+
+const SAMPLE_ARMS = {base: "arm_base.mp4", physvid: "arm_physvid.mp4", phyt2v: "arm_phyt2v.mp4", ours: "arm_ours.mp4"};
+const keyArms = (key, files) => Object.fromEntries(Object.entries(files).map(([k, f]) => [k, mediaUrl({key}, f)]));
+const sampleArms = key => keyArms(key, SAMPLE_ARMS);
+const CMP = [
+  {c:"mechanics", g:"Mechanics · Oblique wall chain",      u:sampleArms("s01")},
+  {c:"mechanics", g:"Mechanics · Damped Pendulum",         u:sampleArms("s02")},
+  {c:"mechanics", g:"Mechanics · Center-of-mass toppling", u:sampleArms("s03")},
+  {c:"mechanics", g:"Mechanics · Multi-body drop",         u:sampleArms("s04")},
+  {c:"material",  g:"Material · Combustibility",           u:sampleArms("s05")},
+  {c:"material",  g:"Material · Acidity/Alkalinity",       u:sampleArms("s06")},
+];
+
+const clip = (c, a) => c.u[a.k];
+
+const LOOP_ARMS = [
+  {k:"prompt", n:"Prompt only"},
+  {k:"r0",     n:"Loop round 0"},
+  {k:"r1",     n:"Loop round 1"},
+  {k:"ours",   n:"Loop round 2"},
+];
+const LOOP_FILES = {prompt: "prompt_only.mp4", r0: "round_0.mp4", r1: "round_1.mp4", ours: "round_2.mp4"};
+const LOOPS = [
+  {c:"mechanics", g:"Mechanics · Wall bounce",     u:keyArms("s07", LOOP_FILES)},
+  {c:"mechanics", g:"Mechanics · Damped pendulum", u:keyArms("s08", LOOP_FILES)},
+  {c:"optics",    g:"Optics · Refraction",         u:keyArms("s09", LOOP_FILES)},
+];
+
+const GALLERY = [
+  {"t": "Vessel drainage", "u": "assets/gallery/g01.mp4"},
+  {"t": "Ball-Hits-Nothing", "u": "assets/gallery/g02.mp4"},
+  {"t": "Magnetic coupling", "u": "assets/gallery/g03.mp4"},
+  {"t": "Domino in juice", "u": "assets/gallery/g04.mp4"},
+  {"t": "Hydrostatic jet depth", "u": "assets/gallery/g05.mp4"},
+  {"t": "Vessel Drainage", "u": "assets/gallery/g06.mp4"},
+  {"t": "Electromagnet Switch", "u": "assets/gallery/g07.mp4"},
+  {"t": "Natural Convection Tracer", "u": "assets/gallery/g08.mp4"},
+  {"t": "Magnetic Attraction Repulsion", "u": "assets/gallery/g09.mp4"},
+  {"t": "Ball-Rolls-Off", "u": "assets/gallery/g10.mp4"},
+  {"t": "Funnel merge", "u": "assets/gallery/g11.mp4"},
+  {"t": "Corner ricochet", "u": "assets/gallery/g12.mp4"},
+  {"t": "Resting contact settle", "u": "assets/gallery/g13.mp4"},
+  {"t": "Lever torque", "u": "assets/gallery/g14.mp4"},
+  {"t": "Gravity", "u": "assets/gallery/g15.mp4"},
+];
+
+const vio = new IntersectionObserver(es => {
+  for (const e of es) {
+    const v = e.target;
+    if (e.isIntersecting) {
+      if (!v.src) v.src = v.dataset.u;
+      v.play().catch(err => { if (err.name !== "AbortError") throw err; });
+    } else v.pause();
+  }
+}, {rootMargin: "260px 0px"});
+
+const el = (tag, cls, text) => {
+  const e = document.createElement(tag);
+  e.className = cls;
+  e.textContent = text;
+  return e;
+};
+function vid(u) {
+  const v = document.createElement("video");
+  v.muted = v.loop = v.playsInline = true;
+  v.preload = "none";
+  v.dataset.u = u;
+  return v;
+}
+const watch = host => host.querySelectorAll("video").forEach(v => vio.observe(v));
+
+function grid(id, arms, list) {
+  const host = document.getElementById(id);
+  const head = el("div", "vrow vhead", "");
+  head.append(el("div", "", ""), ...arms.map(a => el("div", a.k === "ours" ? "vh ours" : "vh", a.n)));
+  host.append(head);
+  for (const c of list) {
+    const row = el("div", "vrow", "");
+    row.append(el("div", "rl", c.g.split(" · ").pop()));
+    for (const a of arms) {
+      const cell = el("div", a.k === "ours" ? "vc ours" : "vc", "");
+      cell.append(vid(clip(c, a)));
+      row.append(cell);
+    }
+    host.append(row);
+  }
+  watch(host);
+}
+grid("cmp", CMP_ARMS, CMP);
+grid("loops", LOOP_ARMS, LOOPS);
+
+const gallery = document.getElementById("gallery");
+for (const g of GALLERY) {
+  const item = el("div", "gi", "");
+  item.append(vid(g.u), el("div", "gn", g.t));
+  gallery.append(item);
+}
+watch(gallery);
+
+function stripItem(g){
+  const f = document.createElement("figure");
+  f.append(vid(g.u), el("figcaption", "", g.t));
+  return f;
+}
+const cut = Math.ceil(GALLERY.length / 2);
+for (const [id, items] of [["rowA", GALLERY.slice(0, cut)], ["rowB", GALLERY.slice(cut)]]) {
+  const row = document.getElementById(id);
+  const half = Array.from({length: Math.ceil(window.innerWidth / (items.length * 284))}, () => items).flat();
+  for (const k of [...half, ...half]) row.append(stripItem(k));
+  watch(row);
+}
+</script>
+</body>
+</html>

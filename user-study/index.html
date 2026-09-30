@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en" data-palette="#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>User Study &middot; Gen-RSI</title>
+<style>
+:root{
+  color-scheme: light;
+  --surface-1:#fcfcfb; --page:#f9f9f7;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --baseline:#c3c2b7; --border:rgba(11,11,11,.10);
+  --accent:#008300;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --surface-1:#1a1a19; --page:#0d0d0d;
+    --text-primary:#fff; --text-secondary:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --baseline:#383835; --border:rgba(255,255,255,.10);
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--text-primary);
+  font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+
+header.top{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+header.top h1{font-size:19px;margin:0;letter-spacing:-.01em}
+header.top p{margin:0;color:var(--text-secondary);font-size:13.5px;max-width:74ch}
+.note{margin:10px 0 0;font-size:13px;color:var(--text-secondary)}
+.note b{color:var(--text-primary)}
+hr{border:0;border-top:1px solid var(--grid);margin:16px 0 14px}
+
+.tabs{display:flex;gap:7px;flex-wrap:wrap}
+.tab{border:1px solid var(--border);background:var(--surface-1);color:var(--text-secondary);
+  border-radius:7px;padding:6px 12px;font-size:13px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+
+.itemhead{display:flex;align-items:center;gap:10px;margin:16px 0 9px}
+.idx{background:var(--text-primary);color:var(--page);border-radius:5px;
+  font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:5px 7px;letter-spacing:.04em}
+.itemhead h2{font-size:15px;margin:0;font-weight:600}
+.itemhead .sub{color:var(--muted);font-size:13px}
+
+.panel{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.85fr);gap:18px;align-items:start}
+@media (max-width:900px){.panel{grid-template-columns:1fr}}
+.stage{background:#000;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.stage video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#000}
+.stage .ph{display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;
+  color:#898781;font-size:14px;letter-spacing:.02em}
+.prompt{margin:10px 0 0;font-size:13.5px;color:var(--text-secondary);
+  background:var(--surface-1);border:1px solid var(--border);border-radius:9px;padding:11px 13px}
+.prompt b{color:var(--text-primary);font-weight:600}
+
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:10px;padding:14px 15px}
+.crit + .crit{margin-top:13px;padding-top:13px;border-top:1px solid var(--grid)}
+.crit .label{font-size:13.5px;font-weight:600}
+.crit .help{font-size:12px;color:var(--muted);margin:2px 0 7px}
+.scale{display:grid;grid-template-columns:repeat(6,1fr);gap:0;
+  border:1px solid var(--grid);border-radius:8px;overflow:hidden}
+.scale button{border:0;border-right:1px solid var(--grid);background:transparent;
+  color:var(--text-secondary);padding:8px 0;font-size:13.5px;cursor:pointer;
+  font-variant-numeric:tabular-nums}
+.scale button:last-child{border-right:0}
+.scale button:hover{background:var(--grid)}
+.scale button[aria-pressed="true"]{background:var(--accent);color:#fff;font-weight:600}
+.scale button:disabled{background:transparent;cursor:not-allowed}
+
+.foot{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:16px}
+.foot .count{font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--border);background:var(--surface-1);color:var(--text-primary);
+  border-radius:7px;padding:7px 14px;font-size:13.5px;cursor:pointer}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.bar{height:4px;background:var(--grid);border-radius:3px;overflow:hidden;margin:14px 0 0}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>User Study</h1>
+  <p>Please review one video per page. Videos are grouped by method, and each video should be
+     rated from 0 to 5 on every criterion.</p>
+</header>
+<p class="note"><b>Note:</b> 0 means very poor, 5 means excellent. The five criteria below are the
+   dimensions the physics audit scores; judge only what is observable, and do not reward or
+   penalize rendering style.</p>
+
+<hr>
+
+<div class="tabs" id="tabs" role="tablist"></div>
+
+<div id="stage-wrap">
+  <div class="itemhead">
+    <span class="idx" id="idx">01</span>
+    <h2 id="title">&nbsp;</h2>
+    <span class="sub" id="sub"></span>
+  </div>
+
+  <div class="panel">
+    <div>
+      <div class="stage"><video id="video" playsinline controls loop muted preload="metadata"></video><div class="ph" id="ph" hidden>Video placeholder</div></div>
+      <p class="prompt"><b>Prompt.</b> <span id="prompt"></span></p>
+    </div>
+    <div class="card" id="criteria"></div>
+  </div>
+
+  <div class="bar"><i id="progress"></i></div>
+  <div class="foot">
+    <span class="count" id="count">0 / 0</span>
+    <button class="btn" id="prev">Previous</button>
+    <button class="btn primary" id="next">Next</button>
+  </div>
+</div>
+
+</div>
+<script>
+const STORE = "genrsi-user-study-v1";
+let DATA = null, method = null, pos = 0;
+let ratings = JSON.parse(localStorage.getItem(STORE) || "{}");
+
+const $ = id => document.getElementById(id);
+const save = () => localStorage.setItem(STORE, JSON.stringify(ratings));
+const keyOf = (m, s) => m + "|" + s;
+
+function renderTabs() {
+  const box = $("tabs");
+  box.innerHTML = "";
+  for (const m of DATA.methods) {
+    const b = document.createElement("button");
+    b.className = "tab";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", String(m.id === method));
+    b.textContent = m.label;
+    b.onclick = () => { method = m.id; pos = 0; render(); };
+    box.append(b);
+  }
+}
+
+function renderCriteria(item) {
+  const box = $("criteria");
+  box.innerHTML = "";
+  const rec = item ? ratings[keyOf(method, item.id)] || {} : {};
+  for (const c of DATA.criteria) {
+    const wrap = document.createElement("div");
+    wrap.className = "crit";
+    const lab = document.createElement("div");
+    lab.className = "label"; lab.textContent = c.label;
+    const help = document.createElement("div");
+    help.className = "help"; help.textContent = c.help;
+    const scale = document.createElement("div");
+    scale.className = "scale";
+    for (let v = 0; v <= 5; v++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = v;
+      b.setAttribute("aria-pressed", String(rec[c.id] === v));
+      b.setAttribute("aria-label", c.label + " " + v);
+      b.disabled = !item;
+      b.onclick = () => {
+        const r = ratings[keyOf(method, item.id)] || (ratings[keyOf(method, item.id)] = {});
+        r[c.id] = v;
+        save(); renderCriteria(item); updateProgress();
+      };
+      scale.append(b);
+    }
+    wrap.append(lab, help, scale);
+    box.append(wrap);
+  }
+}
+
+function updateProgress() {
+  const total = DATA.methods.length * DATA.items.length * DATA.criteria.length;
+  if (!total) { $("progress").style.width = "0%"; return; }
+  let filled = 0;
+  for (const m of DATA.methods)
+    for (const it of DATA.items) {
+      const r = ratings[keyOf(m.id, it.id)] || {};
+      filled += DATA.criteria.filter(c => typeof r[c.id] === "number").length;
+    }
+  $("progress").style.width = (100 * filled / total).toFixed(1) + "%";
+}
+
+function render() {
+  renderTabs();
+  const m = DATA.methods.find(x => x.id === method);
+  const preview = !DATA.items.length;
+  $("video").hidden = preview;
+  $("ph").hidden = !preview;
+  if (preview) {
+    $("idx").textContent = "00";
+    $("title").textContent = m.label;
+    $("sub").textContent = "";
+    $("prompt").textContent = "Placeholder. The clips and prompts of this study are not included in the supplementary.";
+    $("count").textContent = "0 / 0";
+    $("prev").disabled = $("next").disabled = true;
+    renderCriteria(null);
+    updateProgress();
+    return;
+  }
+
+  const item = DATA.items[pos];
+  $("idx").textContent = String(pos + 1).padStart(2, "0");
+  $("title").textContent = m.label;
+  $("sub").textContent = "· " + item.title;
+  $("prompt").textContent = item.prompt || "(prompt unavailable)";
+  const v = $("video");
+  v.src = "clips/" + item.id + "/" + m.id + ".mp4";
+  v.load();
+  v.play().catch(() => {});
+  $("count").textContent = (pos + 1) + " / " + DATA.items.length;
+  $("prev").disabled = pos === 0;
+  $("next").disabled = pos >= DATA.items.length - 1;
+  renderCriteria(item);
+  updateProgress();
+}
+
+$("prev").onclick = () => { if (pos > 0) { pos--; render(); } };
+$("next").onclick = () => { if (pos < DATA.items.length - 1) { pos++; render(); } };
+
+DATA = {
+  methods: [
+    {id: "a", label: "Model A"},
+    {id: "b", label: "Model B"},
+    {id: "c", label: "Model C"},
+    {id: "d", label: "Model D"},
+    {id: "e", label: "Model E"},
+    {id: "f", label: "Model F"},
+  ],
+  criteria: [
+    {id: "visible", label: "Visible event",
+     help: "The objects and the event named in the prompt are actually visible."},
+    {id: "process", label: "Process",
+     help: "The event plays out as a process, not a jump between states."},
+    {id: "causality", label: "Causality",
+     help: "Causes precede effects; contacts produce the right consequences."},
+    {id: "continuity", label: "Continuity",
+     help: "Objects persist and move continuously, without popping or swapping."},
+    {id: "physical_plausibility", label: "Physical plausibility",
+     help: "Motion, timing and final state obey physical law."},
+  ],
+  items: [],
+};
+method = DATA.methods[0].id;
+render();
+</script>
+</body>
+</html>
